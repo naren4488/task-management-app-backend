@@ -7,9 +7,8 @@ exports.registerUser = async (req, res) => {
   try {
     //find existing email
     const lowerCaseEmail = email.toLowerCase();
-    const existingEmail = await User.findOne({ email: lowerCaseEmail });
-
-    if (existingEmail) {
+    const existingUser = await User.findOne({ email: lowerCaseEmail });
+    if (existingUser) {
       return res.status(400).json({
         message: "User already exist with this email",
       });
@@ -29,13 +28,14 @@ exports.registerUser = async (req, res) => {
     const userResponse = newUser.toObject();
     delete userResponse.password;
 
-    return res.status(200).json({
+    return res.status(201).json({
       message: "Registration Succesfull",
       data: userResponse,
     });
   } catch (err) {
-    console.log("Error regestring  user:", err);
-    return res.status(500).json({ error: "Error regestring user" });
+    return res
+      .status(500)
+      .json({ error: err, errorMessage: "Error regestring user" });
   }
 };
 
@@ -45,7 +45,6 @@ exports.loginUser = async (req, res) => {
     const lowerCaseEmail = email.toLowerCase();
     //find user
     const user = await User.findOne({ email: lowerCaseEmail });
-    console.log(user);
     if (user) {
       // match password
       const isMatch = await bcrypt.compare(password, user.password);
@@ -68,7 +67,8 @@ exports.loginUser = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log("Error regestring  user:", err);
-    return res.status(500).json({ error: "Error Logging user" });
+    return res
+      .status(500)
+      .json({ error: err, errorMessage: "Error Logging user" });
   }
 };

@@ -1,5 +1,6 @@
 const express = require("express");
 let dotenv = require("dotenv").config();
+const cors = require("cors");
 
 const connectDB = require("./config/db.js");
 console.log("PORT", process.env.PORT);
@@ -17,6 +18,8 @@ const app = express();
 
 // to convert all request bodies into json format
 app.use(express.json());
+
+app.use(cors());
 
 // health check API
 app.get("/health", (req, res) => {
