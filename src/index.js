@@ -19,13 +19,13 @@ app.use(express.json());
 
 // health check API
 app.get("/health", (req, res) => {
-  res.send({ message: "Healthy, API is working fine" });
+  res.json({ message: "Healthy, API is working fine" });
 });
 
 //user routes
 app.use("/api/user", userRoutes);
 //task routes
-app.use("/api/", taskRoutes);
+// app.use("/api/", taskRoutes);
 
 // start server
 app.listen(PORT, () => {
