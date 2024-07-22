@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 5000;
 
 const userRoutes = require("./routes/userRoutes.js");
 const taskRoutes = require("./routes/tasksRoutes.js");
+const verifyToken = require("./middlewares/authMiddleware.js");
 
 // connect DB
 connectDB();
@@ -25,7 +26,7 @@ app.get("/health", (req, res) => {
 //user routes
 app.use("/api/user", userRoutes);
 //task routes
-// app.use("/api/", taskRoutes);
+app.use("/api/", verifyToken, taskRoutes);
 
 // start server
 app.listen(PORT, () => {
