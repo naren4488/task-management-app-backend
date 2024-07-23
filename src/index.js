@@ -21,9 +21,10 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin:
-      "https://task-management-app-frontend-narendra-kajlas-projects.vercel.app" ||
+    origin: [
+      "https://task-management-app-frontend-narendra-kajlas-projects.vercel.app",
       "https://task-management-app-frontend.onrender.com",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
