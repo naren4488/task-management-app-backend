@@ -19,7 +19,14 @@ const app = express();
 // to convert all request bodies into json format
 app.use(express.json());
 
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      "https://task-management-app-frontend-narendra-kajlas-projects.vercel.app/",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
 // health check API
 app.get("/health", (req, res) => {
