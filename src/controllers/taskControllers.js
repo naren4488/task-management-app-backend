@@ -15,7 +15,6 @@ exports.getAllTasks = async (req, res) => {
 
 exports.createTask = async (req, res) => {
   const { title, description, status } = req.body;
-  console.log("req.user: ====", req.user);
   try {
     const newTask = await Task({
       title,
@@ -27,7 +26,7 @@ exports.createTask = async (req, res) => {
     newTask.save();
 
     return res.status(200).json({
-      message: "Succesfull",
+      message: "Task created succesfully",
       newTask,
     });
   } catch (err) {
@@ -39,7 +38,7 @@ exports.createTask = async (req, res) => {
 exports.updateTask = async (req, res) => {
   const { title, description, status } = req.body;
   try {
-    const task = await Task.findById(req.params.id);
+    let task = await Task.findById(req.params.id);
     if (!task) {
       return res.status(404).json({
         message: "Task Not Found",
@@ -47,12 +46,12 @@ exports.updateTask = async (req, res) => {
     }
 
     if (task.createdBy.toString() != req.user.id) {
-      return res.status(404).json({
-        message: "User not authorized",
+      return res.status(403).json({
+        message: "User forbidden",
       });
     }
-    task = await Task.findAndUpdate(
-      req.params.id,
+    task = await Task.findOneAndUpdate(
+      { _id: req.params.id },
       {
         $set: {
           title,
@@ -64,34 +63,38 @@ exports.updateTask = async (req, res) => {
     );
 
     return res.status(200).json({
-      message: "Succesfull",
+      message: "Task updated successfully",
       task,
     });
   } catch (err) {
     console.log("Error creating tasks:", err);
-    return res.status(500).json({ error: "Error Updating tasks" });
+    return res
+      .status(500)
+      .json({ error: err, errorMessage: "Error Updating tasks" });
   }
 };
 
 exports.deleteTask = async (req, res) => {
   try {
+    console.log("--------------", req.params.id);
     const task = await Task.findById(req.params.id);
+    console.log(task);
     if (!task) {
       return res.status(404).json({
         message: "Task Not Found",
       });
     }
 
-    if (task.createdBy.toString() != req.params.id) {
-      return res.status(404).json({
-        message: "User not authorized",
+    if (task.createdBy.toString() != req.user.id) {
+      return res.status(403).json({
+        message: "User forbidden",
       });
     }
 
-    await Task.deleteOne(req.params.id);
+    await Task.deleteOne({ _id: req.params.id });
 
     return res.status(200).json({
-      message: "Task Deleted succesfully",
+      message: "Task deleted succesfully",
       task,
     });
   } catch (err) {
